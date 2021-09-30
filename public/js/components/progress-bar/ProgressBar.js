@@ -1,17 +1,16 @@
 class Progressbar {
-    constructor(selector, data) {
+    constructor(selector) {
         this.selector = selector;
-        this.data = data;
 
         this.DOM = null;
-        this.allProgressBar = null;
+        this.allProgressBarDOM = null;
+        this.animatedElementsCount = 0;
 
         this.init();
     }
 
     init() {
-        if (!this.isValidSelector() ||
-            !this.isValidData()) {
+        if (!this.isValidSelector()) {
             console.error('ERROR: nepraejo pirmines patikros');
             return false;
         }
@@ -22,8 +21,8 @@ class Progressbar {
             return false;
         }
 
-        this.render();
-        this.addEvent();
+        this.allProgressBarDOM = this.DOM.querySelectorAll('.progress-bar');
+        this.addEvents();
     }
 
     isValidSelector() {
@@ -34,56 +33,25 @@ class Progressbar {
         return true;
     }
 
-    isValidData() {
-        if (!Array.isArray(this.data) ||
-            this.data.length === 0) {
-            return false;
-        }
-        return true;
-    }
-
-    render() {
-        let HTML = '';
-
-        for (const bar of this.data) {
-            HTML += `<div class="progress-bar">
-                        <div class="top">
-                            <div class="title">${bar.title}</div>
-                            <div class="value">${bar.value}%</div>
-                        </div>
-                        <div class="bottom">
-                            <div class="progress" style="width: ${bar.value}%;">
-                                <div class="value"></div>
-                            </div>
-                        </div>
-                    </div>`;
-        }
-
-        this.DOM.innerHTML += HTML;
-        this.allProgresBar = document.querySelectorAll(".progress-bar");
-        console.log(this.allProgresBar);
-    }
-    addEvent() {
+    addEvents() {
         window.addEventListener('scroll', () => {
-            //const scrollPozicion = window.scrollY;
-            //const screnHeight = window.innerHeight;
-            const screenBottom = window.scrollY + window.innerHeight;
-            console.log('jhvuih');
-
-            for (let i = 0; i < this.allProgresBar.length; i++) {
-                const element = this.allProgresBar[i];
-                const elementBottom = element.offsetHeight + element.offsetTop;
-                if (screenBottom >= elementBottom) {
-                    element.classList.add('uzkrovimas');
-                    console.log('animuojame');
-                }
+            if (this.animatedElementsCount === this.allProgressBarDOM.length) {
+                return;
             }
 
+            const screenBottom = window.scrollY + window.innerHeight;
+            this.animatedElementsCount = 0;
+
+            for (const progressBarDOM of this.allProgressBarDOM) {
+                const progressBarBottom = progressBarDOM.offsetTop + progressBarDOM.offsetHeight;
+
+                if (screenBottom >= progressBarBottom) {
+                    progressBarDOM.classList.add('loading');
+                    this.animatedElementsCount++;
+                }
+            }
         })
-
     }
-
-
 }
 
 export { Progressbar }
