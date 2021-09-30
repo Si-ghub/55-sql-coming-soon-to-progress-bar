@@ -11,7 +11,7 @@ app.init = async () => {
         database: 'coming-soon',
     });
 
-    // paruosti reikiamus direktorijas
+    // paruosti reikiamas direktorijas
 
     // paruosti reikiamus failus
 
